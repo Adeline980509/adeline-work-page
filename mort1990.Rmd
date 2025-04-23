@@ -1,0 +1,227 @@
+---
+title: "mort1990"
+author: "Adeline Yuan"
+date: "2025-03-13"
+output: html_document
+---
+
+```{r}
+library(readr)
+library(dplyr)
+library(haven)
+library(data.table)
+```
+
+```{r}
+# Load the dataset
+mort1990 <- fread("/Users/yuanhaining/Desktop/mort1990.csv")
+
+# Set a seed for reproducibility (optional, but recommended)
+set.seed(123)
+
+# Pull a 10% random sample
+mort1990_sample <- mort1990[sample(.N, .N * 0.10)]
+
+# Check the sampled data
+View(mort1990_sample)
+
+```
+
+```{r}
+colnames(mort1990)
+```
+
+```{r}
+# Rename columns for clarity
+mort1990_sample <- mort1990_sample %>%
+  rename(
+    data_year = datayear,
+    reporting_area = reparea,
+    shipment_number = shipno,
+    record_type = rectype,  # Resident or non-resident
+    resident_status = restatus,
+    county_occurrence = countyoc,
+    state_occurrence = stateoc,
+    region = region,
+    census_division_occurrence = divstoc,
+    expanded_state_occurrence = exstatoc,
+    county_residence = countyrs,
+    state_residence = staters,
+    city_residence = cityrs,
+    population_size = popsize,
+    metro_status = metro,
+    region_residence = regnres,
+    census_division_residence = divstres,
+    expanded_state_residence = exstares,
+    PMSA = pmsares,
+    population_size_occurrence = popsizoc,
+    population_size_residence = popsizrs,
+    population_msa = popmsa,
+    education = educ,
+    education_recode = educr,
+    month_of_death = monthdth,
+    sex = sex,
+    race_detailed = race,
+    race_white_non_white = racer2,
+    race = racer3,
+    age = age,
+    age_52_group = ager52,
+    age_27_group = ager27,
+    age_10_year = ager12,
+    age_infant = ager22,
+    place_of_death = placdth,
+    marital_status = marstat,
+    state_of_birth = statebth,
+    hispanic_origin = hispanic,
+    hispanic_recode = hspanicr,
+    day_of_week_death = weekday,
+    autopsy_performed = autopsy,
+    industry = industry,
+    occupation = occup,
+    underlying_cause_detailed = ucod,
+    underlying_cause_282 = ucr282,
+    underlying_cause_72 = ucr72,
+    underlying_cause_61 = ucr61,
+    underlying_cause_34 = ucr34,
+    number_of_entity_codes = eanum,
+    
+    # Entity conditions
+    entity_code_1 = entity1, entity_line_number_1 = econdp_1, entity_condition_sequence_1 = econds_1, entity_condition_code_1 = enicon_1, entity_injury_flag_1 = eniflag1,
+    entity_code_2 = entity2, entity_line_number_2 = econdp_2, entity_condition_sequence_2 = econds_2, entity_condition_code_2 = enicon_2, entity_injury_flag_2 = eniflag2,
+    entity_code_3 = entity3, entity_line_number_3 = econdp_3, entity_condition_sequence_3 = econds_3, entity_condition_code_3 = enicon_3, entity_injury_flag_3 = eniflag3,
+    entity_code_4 = entity4, entity_line_number_4 = econdp_4, entity_condition_sequence_4 = econds_4, entity_condition_code_4 = enicon_4, entity_injury_flag_4 = eniflag4,
+    entity_code_5 = entity5, entity_line_number_5 = econdp_5, entity_condition_sequence_5 = econds_5, entity_condition_code_5 = enicon_5, entity_injury_flag_5 = eniflag5,
+    entity_code_6 = entity6, entity_line_number_6 = econdp_6, entity_condition_sequence_6 = econds_6, entity_condition_code_6 = enicon_6, entity_injury_flag_6 = eniflag6,
+    entity_code_7 = entity7, entity_line_number_7 = econdp_7, entity_condition_sequence_7 = econds_7, entity_condition_code_7 = enicon_7, entity_injury_flag_7 = eniflag7,
+    entity_code_8 = entity8, entity_line_number_8 = econdp_8, entity_condition_sequence_8 = econds_8, entity_condition_code_8 = enicon_8, entity_injury_flag_8 = eniflag8,
+    entity_code_9 = entity9, entity_line_number_9 = econdp_9, entity_condition_sequence_9 = econds_9, entity_condition_code_9 = enicon_9, entity_injury_flag_9 = eniflag9,
+    entity_code_10 = entity10, entity_line_number_10 = econdp_10, entity_condition_sequence_10 = econds_10, entity_condition_code_10 = enicon_10, entity_injury_flag_10 = eniflag10,
+    entity_code_11 = entity11, entity_line_number_11 = econdp_11, entity_condition_sequence_11 = econds_11, entity_condition_code_11 = enicon_11, entity_injury_flag_11 = eniflag11,
+    entity_code_12 = entity12, entity_line_number_12 = econdp_12, entity_condition_sequence_12 = econds_12, entity_condition_code_12 = enicon_12, entity_injury_flag_12 = eniflag12,
+    entity_code_13 = entity13, entity_line_number_13 = econdp_13, entity_condition_sequence_13 = econds_13, entity_condition_code_13 = enicon_13, entity_injury_flag_13 = eniflag13,
+    entity_code_14 = entity14, entity_line_number_14 = econdp_14, entity_condition_sequence_14 = econds_14, entity_condition_code_14 = enicon_14, entity_injury_flag_14 = eniflag14,
+    entity_code_15 = entity15, entity_line_number_15 = econdp_15, entity_condition_sequence_15 = econds_15, entity_condition_code_15 = enicon_15, entity_injury_flag_15 = eniflag15,
+    entity_code_16 = entity16, entity_line_number_16 = econdp_16, entity_condition_sequence_16 = econds_16, entity_condition_code_16 = enicon_16, entity_injury_flag_16 = eniflag16,
+    entity_code_17 = entity17, entity_line_number_17 = econdp_17, entity_condition_sequence_17 = econds_17, entity_condition_code_17 = enicon_17, entity_injury_flag_17 = eniflag17,
+    entity_code_18 = entity18, entity_line_number_18 = econdp_18, entity_condition_sequence_18 = econds_18, entity_condition_code_18 = enicon_18, entity_injury_flag_18 = eniflag18,
+    entity_code_19 = entity19, entity_line_number_19 = econdp_19, entity_condition_sequence_19 = econds_19, entity_condition_code_19 = enicon_19, entity_injury_flag_19 = eniflag19,
+    entity_code_20 = entity20, entity_line_number_20 = econdp_20, entity_condition_sequence_20 = econds_20, entity_condition_code_20 = enicon_20, entity_injury_flag_20 = eniflag20,
+    
+    # Record conditions
+    number_of_record_codes = ranum,
+    record_condition_code_1 = record_1, record_injury_flag_1 = rnifla_1,
+    record_condition_code_2 = record_2, record_injury_flag_2 = rnifla_2,
+    record_condition_code_3 = record_3, record_injury_flag_3 = rnifla_3,
+    record_condition_code_4 = record_4, record_injury_flag_4 = rnifla_4,
+    record_condition_code_5 = record_5, record_injury_flag_5 = rnifla_5,
+    record_condition_code_6 = record_6, record_injury_flag_6 = rnifla_6,
+    record_condition_code_7 = record_7, record_injury_flag_7 = rnifla_7,
+    record_condition_code_8 = record_8, record_injury_flag_8 = rnifla_8,
+    record_condition_code_9 = record_9, record_injury_flag_9 = rnifla_9,
+    record_condition_code_10 = record_10, record_injury_flag_10 = rnifla_10,
+    record_condition_code_11 = record_11, record_injury_flag_11 = rnifla_11,
+    record_condition_code_12 = record_12, record_injury_flag_12 = rnifla_12,
+    record_condition_code_13 = record_13, record_injury_flag_13 = rnifla_13,
+    record_condition_code_14 = record_14, record_injury_flag_14 = rnifla_14,
+    record_condition_code_15 = record_15, record_injury_flag_15 = rnifla_15,
+    record_condition_code_20 = record_20, record_injury_flag_20 = rnifla_20
+  )
+
+# Convert explicitly to data.table again (important!)
+mort1990_sample <- as.data.table(mort1990_sample)
+
+# View the updated sample dataset
+View(mort1990_sample)
+
+```
+
+```{r}
+ # Define label mappings
+sex_labels <- c("1" = "Male", "2" = "Female")
+
+race_detailed_labels <- c("0" = "Guamian", "1" = "White", "2" = "Black", "3" = "Native",
+                          "4" = "Chinese", "5" = "Japanese", "6" = "Hawaiian",
+                          "7" = "Other", "8" = "Filipino")
+
+race_white_non_white_labels <- c("1" = "White", "2" = "Nonwhite")
+
+race_labels <- c("1" = "White", "2" = "Black", "3" = "Other")
+
+autopsy_labels <- c("0" = "No", "1" = "Yes", "8" = "Item not on certificate", "9" = "Not stated")
+
+resident_status_labels <- c("1" = "Resident", "2" = "Intrastate Nonresident",
+                            "3" = "Interstate Nonresident", "4" = "Foreign Resident")
+
+metro_status_labels <- c("1" = "Metropolitan County", "2" = "Non-Metropolitan County",
+                         "Z" = "Foreign Residents")
+
+state_labels <- c("01" = "Alabama", "02" = "Alaska", "03" = "Arizona", "04" = "Arkansas",
+                  "05" = "California", "06" = "Colorado", "07" = "Connecticut",
+                  "08" = "Delaware", "09" = "District of Columbia", "10" = "Florida",
+                  "11" = "Georgia", "12" = "Hawaii", "13" = "Idaho", "14" = "Illinois",
+                  "15" = "Indiana", "16" = "Iowa", "17" = "Kansas", "18" = "Kentucky",
+                  "19" = "Louisiana", "20" = "Maine", "21" = "Maryland", "22" = "Massachusetts",
+                  "23" = "Michigan", "24" = "Minnesota", "25" = "Mississippi", "26" = "Missouri",
+                  "27" = "Montana", "28" = "Nebraska", "29" = "Nevada", "30" = "New Hampshire",
+                  "31" = "New Jersey", "32" = "New Mexico", "33" = "New York", "34" = "North Carolina",
+                  "35" = "North Dakota", "36" = "Ohio", "37" = "Oklahoma", "38" = "Oregon",
+                  "39" = "Pennsylvania", "40" = "Rhode Island", "41" = "South Carolina",
+                  "42" = "South Dakota", "43" = "Tennessee", "44" = "Texas", "45" = "Utah",
+                  "46" = "Vermont", "47" = "Virginia", "48" = "Washington",
+                  "49" = "West Virginia", "50" = "Wisconsin", "51" = "Wyoming")
+
+month_of_death_labels <- c("01" = "January", "02" = "February", "03" = "March",
+                           "04" = "April", "05" = "May", "06" = "June",
+                           "07" = "July", "08" = "August", "09" = "September",
+                           "10" = "October", "11" = "November", "12" = "December")
+
+# Apply labels to categorical columns
+mort1990_sample  <- mort1990_sample  %>%
+  mutate(
+    sex = factor(sex_labels[as.character(sex)]),
+    race_detailed = factor(race_detailed_labels[as.character(race_detailed)]),
+    race_white_non_white = factor(race_white_non_white_labels[as.character(race_white_non_white)]),
+    race = factor(race_labels[as.character(race)]),
+    autopsy_performed = factor(autopsy_labels[as.character(autopsy_performed)]),
+    resident_status = factor(resident_status_labels[as.character(resident_status)]),
+    metro_status = factor(metro_status_labels[as.character(metro_status)]),
+    state_residence = factor(state_labels[as.character(state_residence)]),
+    state_occurrence = factor(state_labels[as.character(state_occurrence)]),
+    month_of_death = factor(month_of_death_labels[as.character(month_of_death)])
+  )
+
+# View dataset
+# Step 3: View random sample
+mort1990_sample <- as.data.table(mort1990_sample)
+View(mort1990_sample)
+```
+
+```{r}
+colnames(mort1990_sample)
+```
+```{r}
+# Check if age is stored as a string; if so, convert to numeric
+mort1990_sample <- mort1990_sample %>%
+  mutate(age = as.numeric(as.character(age)))
+
+# Check unique state_occurrence values to confirm the code for DC
+unique(mort1990_sample$state_occurrence)
+
+# Filter for infant deaths (age == 0) in DC (state_occurrence == "09" or 9)
+infant_deaths_dc <- mort1990_sample %>%
+  filter(age == 0, state_occurrence %in% c("09", 9, "District of Columbia"))
+
+# Check how many rows match
+print(nrow(infant_deaths_dc))
+
+# If data exists, take a 10% sample
+if (nrow(infant_deaths_dc) > 0) {
+  set.seed(123)
+  infant_deaths_dc_sample <- infant_deaths_dc %>%
+    sample_frac(0.10)
+  View(infant_deaths_dc_sample)
+} else {
+  print("No matching infant deaths in DC found.")
+}
+
+```

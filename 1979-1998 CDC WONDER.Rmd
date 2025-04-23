@@ -1,0 +1,104 @@
+---
+title: "1979-1998 CDC WONDER"
+author: "Adeline Yuan"
+date: "2025-03-20"
+output: html_document
+---
+
+```{r}
+library(readr)
+library(dplyr)
+library(haven)
+library(data.table)
+library(ggplot2)
+
+```
+
+```{r}
+# Use read
+DC_mortality_1979_1998 <- fread("/Users/yuanhaining/Desktop/DC_Compressed Mortality, 1979-1998.csv")
+
+DC_mortality_1979_1998
+```
+```{r}
+colnames(DC_mortality_1979_1998)
+```
+
+```{r}
+# Count the number of rows (samples) for each year
+year_counts <- table(DC_mortality_1979_1998$Year)
+
+# Find the year with the most samples
+most_samples_year <- names(which.max(year_counts))
+most_samples_count <- max(year_counts)
+
+# Print the result
+cat("The year with the most samples is", most_samples_year, "with", most_samples_count, "samples.\n")
+```
+
+
+```{r}
+# Take a 10% random sample
+DC_mortality_1979_1998_sample <- DC_mortality_1979_1998[sample(.N, .N * 0.10)]
+
+set.seed(123)
+# Check the sampled data
+View(DC_mortality_1979_1998_sample)
+```
+
+```{r}
+# Filter data for the year 1990
+DC_mortality_1990 <- DC_mortality_1979_1998[Year == 1990]
+
+# View the filtered data
+View(DC_mortality_1990)
+
+```
+
+```{r}
+DC_mortality_1981 <- DC_mortality_1979_1998[Year == 1981]
+# View the filtered data
+View(DC_mortality_1981)
+```
+
+```{r}
+# Basic plot: Number of samples per year
+ggplot(DC_mortality_1979_1998, aes(x = Year)) +
+  geom_bar(fill = "steelblue") +
+  labs(title = "Number of Samples per Year",
+       x = "Year", y = "Count") +
+  theme_minimal()
+
+# Breakdown by Sex
+ggplot(DC_mortality_1979_1998, aes(x = Year, fill = Sex)) +
+  geom_bar(position = "dodge") +
+  labs(title = "Number of Samples per Year by Sex",
+       x = "Year", y = "Count") +
+  theme_minimal()
+
+# Breakdown by Race
+ggplot(DC_mortality_1979_1998, aes(x = Year, fill = Race)) +
+  geom_bar(position = "dodge") +
+  labs(title = "Number of Samples per Year by Race",
+       x = "Year", y = "Count") +
+  theme_minimal()
+
+# Top 5 causes of death
+top_causes <- DC_mortality_1979_1998 %>%
+  count(`Cause of death`) %>%
+  slice_max(order_by = n, n = 5) %>%
+  pull(`Cause of death`)
+
+# Filter the dataset
+filtered_data <- DC_mortality_1979_1998 %>%
+  filter(`Cause of death` %in% top_causes)
+
+# Plot
+ggplot(filtered_data, aes(x = Year, fill = `Cause of death`)) +
+  geom_bar(position = "dodge") +
+  labs(title = "Number of Samples per Year for Top 5 Causes of Death",
+       x = "Year", y = "Count") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+```

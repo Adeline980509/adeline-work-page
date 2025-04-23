@@ -1,0 +1,85 @@
+---
+title: "mort1998"
+author: "Adeline Yuan"
+date: "2025-03-15"
+output: html_document
+---
+
+```{r}
+library(readr)
+library(dplyr)
+library(haven)
+library(data.table)
+```
+
+```{r}
+mort1998 <- data.table::fread("/Users/yuanhaining/Desktop/mort1998.csv")
+mort1998
+```
+
+
+```{r}
+colnames(mort1998)
+```
+Compare to 1990: Columns added in mort1998 (not in mort1990):
+"fipscity"
+"year"
+"injwork"
+"raceimp"
+
+Columns removed in mort1998: (present in mort1990 but not in mort1998):
+"datayear" (renamed "year" in 1998)
+"shipno"
+"autopsy"
+"ucr52" (in your provided mort1990, but seems replaced or removed in mort1998)
+
+
+```{r}
+# Rename columns based on the provided 1998 documentation
+setnames(mort1998, old = c(
+  "year", "rectype", "restatus", "stateoc", "countyoc", "region", "divstoc", "exstatoc", 
+  "staters", "countyrs", "cityrs", "popsize", "metro", "regnres", "divstres", "exstares",
+  "pmsares", "popsizoc", "popsizrs", "popmsa", "educ", "educr", "monthdth", "sex",
+  "race", "racer3", "racer2", "age", "ager52", "ager27", "ager12", "ager22",
+  "placdth", "marstat", "statbth", "hispanic", "hspanicr", "weekday", "industry",
+  "occup", "ucr52", "fipscity", "fipssto", "fipsctyo", "fipsstr", "fipsctyr", "fipspmsa",
+  "fipscmsa", "injwork", "raceimp", "ageflag", "accident", "ucod", "ucr282",
+  "ucr72", "ucr61", "ucr34", "eanum",
+  paste0("econdp_", 1:20), paste0("econds_", 1:20), paste0("enicon_", 1:20), paste0("enifla_", 1:20),
+  "ranum", paste0("record_", 1:20), paste0("rnifla_", 1:20)
+), new = c(
+  "data_year", "record_type", "resident_status", "state_occurrence", "county_occurrence",
+  "region", "census_division_occurrence", "expanded_state_occurrence", "state_residence",
+  "county_residence", "city_residence", "population_size", "metro_status",
+  "region_residence", "census_division_residence", "expanded_state_residence",
+  "PMSA", "population_size_occurrence", "population_size_residence", "population_msa",
+  "education", "education_recode", "month_of_death", "sex",
+  "race_detailed", "race", "race_white_non_white", "age", "age_52_group",
+  "age_27_group", "age_10_year", "age_infant", "place_of_death", "marital_status",
+  "state_of_birth", "hispanic_origin", "hispanic_recode", "day_of_week_death",
+  "industry", "occupation", "underlying_cause_52", "fips_city",
+  "fips_state_occurrence", "fips_county_occurrence", "fips_state_residence",
+  "fips_county_residence", "fips_pmsa", "fips_cmsa", "injury_at_work", "race_imputed",
+  "age_flag", "place_of_accident", "underlying_cause_detailed",
+  "underlying_cause_282", "underlying_cause_72", "underlying_cause_61",
+  "underlying_cause_34", "number_of_entity_codes",
+  paste0("entity_line_number_", 1:20),
+  paste0("entity_condition_sequence_", 1:20),
+  paste0("entity_condition_code_", 1:20),
+  paste0("entity_injury_flag_", 1:20),
+  "number_of_record_codes",
+  paste0("record_condition_code_", 1:20),
+  paste0("record_injury_flag_", 1:20)
+))
+
+# Check updated names and data structure
+head(mort1998)
+View(mort1998)
+
+```
+
+```{r}
+colnames(mort1998)
+```
+
+

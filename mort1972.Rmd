@@ -1,0 +1,411 @@
+---
+title: "mort1972"
+author: "Adeline Yuan"
+date: "2025-04-04"
+output: html_document
+---
+
+```{r}
+library(readr)
+library(dplyr)
+library(haven)
+library(data.table)
+```
+
+```{r}
+# Load the dataset
+mort1972 <- fread("/Users/yuanhaining/Desktop/mort1972.csv")
+mort1972
+```
+```{r}
+# Set a seed for reproducibility (optional, but recommended)
+set.seed(123)
+
+# Pull a 10% random sample
+mort1972_sample <- mort1972[sample(.N, .N * 0.10)]
+
+# Check the sampled data
+View(mort1972_sample)
+```
+
+```{r}
+colnames(mort1972)
+```
+```{r}
+mort1972 <- mort1972 |> rename(
+  data_year = datayear,
+  shipment_number = shipno,
+  reporting_area = reparea,
+  record_type = rectype, #resident or non-resident
+  resident_status = restatus,
+  county_residence = countyrs,
+  state_residence = staters,
+  city_residence = cityrs,
+  population_size = popsize,
+  SMSA = smsares,
+  metro_status = metro,
+  state_occurence = stateoc,
+  county_occurence = countyoc,
+  month_of_death = monthdth,
+  day_of_death = daydth,
+  sex = sex,
+  race_detailed = race,  # detailed race classification
+  race_white_non_white = racer2,
+  race_recode = racer3,  # renamed clearly to avoid conflicts
+  age = age,
+  age_10_yr = ager12,
+  age_5_yr = ager27,
+  age_infant = ager22,
+  census_division_residence = divstres,
+  census_division_occurence = divstoc,
+  autopsy_performed = autopsy,
+  findings_used = findings,
+  underlying_cause_detailed = ucod,
+  underlying_cause_281 = ucr281,
+  underlying_cause_69 = ucr69,
+  underlying_infant_cause_65 = ucr65,
+  underlying_cause_34 = ucr34,
+  place_of_accident = accident,
+  record_id = seqnum,
+  number_of_entity_codes = eanum,
+  entity_code_1 = entity1,
+  entity_line_number_1 = econdp_1,
+  entity_condition_sequence_1 = econds_1,
+  entity_condition_code_1 = enicon_1,
+  entity_injury_flag_1 = eniflag1,
+  entity_code_2 = entity2,
+  entity_line_number_2 = econdp_2,
+  entity_condition_sequence_2 = econds_2,
+  entity_condition_code_2 = enicon_2,
+  entity_injury_flag_2 = eniflag2,
+  entity_code_3 = entity3,
+  entity_line_number_3 = econdp_3,
+  entity_condition_sequence_3 = econds_3,
+  entity_condition_code_3 = enicon_3,
+  entity_injury_flag_3 = eniflag3,
+  entity_code_4 = entity4,
+  entity_line_number_4 = econdp_4,
+  entity_condition_sequence_4 = econds_4,
+  entity_condition_code_4 = enicon_4,
+  entity_injury_flag_4 = eniflag4,
+  entity_code_5 = entity5,
+  entity_line_number_5 = econdp_5,
+  entity_condition_sequence_5 = econds_5,
+  entity_condition_code_5 = enicon_5,
+  entity_injury_flag_5 = eniflag5,
+  entity_code_6 = entity6,
+  entity_line_number_6 = econdp_6,
+  entity_condition_sequence_6 = econds_6,
+  entity_condition_code_6 = enicon_6,
+  entity_injury_flag_6 = eniflag6,
+  entity_code_7 = entity7,
+  entity_line_number_7 = econdp_7,
+  entity_condition_sequence_7 = econds_7,
+  entity_condition_code_7 = enicon_7,
+  entity_injury_flag_7 = eniflag7,
+  entity_code_8 = entity8,
+  entity_line_number_8 = econdp_8,
+  entity_condition_sequence_8 = econds_8,
+  entity_condition_code_8 = enicon_8,
+  entity_injury_flag_8 = eniflag8,
+  entity_code_9 = entity9,
+  entity_line_number_9 = econdp_9,
+  entity_condition_sequence_9 = econds_9,
+  entity_condition_code_9 = enicon_9,
+  entity_injury_flag_9 = eniflag9,
+  entity_code_10 = entity10,
+  entity_line_number_10 = econdp_10,
+  entity_condition_sequence_10 = econds_10,
+  entity_condition_code_10 = enicon_10,
+  entity_injury_flag_10 = eniflag10,
+  entity_code_11 = entity11,
+  entity_line_number_11 = econdp_11,
+  entity_condition_sequence_11 = econds_11,
+  entity_condition_code_11 = enicon_11,
+  entity_injury_flag_11 = eniflag11,
+  entity_code_12 = entity12,
+  entity_line_number_12 = econdp_12,
+  entity_condition_sequence_12 = econds_12,
+  entity_condition_code_12 = enicon_12,
+  entity_injury_flag_12 = eniflag12,
+  entity_code_13 = entity13,
+  entity_line_number_13 = econdp_13,
+  entity_condition_sequence_13 = econds_13,
+  entity_condition_code_13 = enicon_13,
+  entity_injury_flag_13 = eniflag13,
+  entity_code_14 = entity14,
+  entity_line_number_14 = econdp_14,
+  entity_condition_sequence_14 = econds_14,
+  entity_condition_code_14 = enicon_14,
+  entity_injury_flag_14 = eniflag14,
+  number_of_record_codes = ranum,
+  record_condition_code_1 = record_1,
+  record_injury_flag_1 = rnifla_1,
+  record_condition_code_2 = record_2,
+  record_injury_flag_2 = rnifla_2,
+  record_condition_code_3 = record_3,
+  record_injury_flag_3 = rnifla_3,
+  record_condition_code_4 = record_4,
+  record_injury_flag_4 = rnifla_4,
+  record_condition_code_5 = record_5,
+  record_injury_flag_5 = rnifla_5,
+  record_condition_code_6 = record_6,
+  record_injury_flag_6 = rnifla_6,
+  record_condition_code_7 = record_7,
+  record_injury_flag_7 = rnifla_7,
+  record_condition_code_8 = record_8,
+  record_injury_flag_8 = rnifla_8,
+  record_condition_code_9 = record_9,
+  record_injury_flag_9 = rnifla_9,
+  record_condition_code_10 = record_10,
+  record_injury_flag_10 = rnifla_10,
+  record_condition_code_11 = record_11,
+  record_injury_flag_11 = rnifla_11,
+  record_condition_code_12 = record_12,
+  record_injury_flag_12 = rnifla_12,
+  record_condition_code_13 = record_13,
+  record_injury_flag_13 = rnifla_13,
+  record_condition_code_14 = record_14,
+  record_injury_flag_14 = rnifla_14
+)
+
+# Convert explicitly to data.table again
+mort1972 <- as.data.table(mort1972)
+
+# View the updated dataset
+View(mort1972)
+
+```
+
+```{r}
+label_mortality_data <- function(mort1972) {
+  
+  # Define label mappings
+  sex_labels <- c("1" = "male", "2" = "female")
+
+  race_detailed_labels <- c("0" = "guamian", "1" = "white", "2" = "black", "3" = "native", 
+                            "4" = "chinese", "5" = "japanese", "6" = "hawaiian", 
+                            "7" = "other", "8" = "filipino")
+
+  race_white_non_white_labels <- c("1" = "white", "2" = "nonwhite")
+
+  race_labels <- c("1" = "white", "2" = "black", "3" = "other")
+
+  autopsy_labels <- c("0" = "No", "1" = "Yes", 
+                      "8" = "Item not on certificate", "9" = "Not stated")
+
+  resident_status_labels <- c("1" = "Resident", "2" = "Intrastate Nonresident", 
+                              "3" = "Interstate Nonresident", "4" = "Foreign Resident")
+
+  metro_status_labels <- c("1" = "Metropolitan County",
+                           "2" = "Non-Metropolitan County",
+                           "Z" = "Foreign Residents")
+
+  state_labels <- c("01" = "Alabama","02" = "Alaska","03" = "Arizona","04" = "Arkansas",
+                    "05" = "California","06" = "Colorado","07" = "Connecticut",
+                    "08" = "Delaware","09" = "District of Columbia","10" = "Florida",
+                    "11" = "Georgia","12" = "Hawaii","13" = "Idaho","14" = "Illinois",
+                    "15" = "Indiana","16" = "Iowa","17" = "Kansas","18" = "Kentucky",
+                    "19" = "Louisiana","20" = "Maine","21" = "Maryland","22" = "Massachusetts",
+                    "23" = "Michigan","24" = "Minnesota","25" = "Mississippi","26" = "Missouri",
+                    "27" = "Montana","28" = "Nebraska","29" = "Nevada","30" = "New Hampshire",
+                    "31" = "New Jersey","32" = "New Mexico","33" = "New York","34" = "North Carolina",
+                    "35" = "North Dakota","36" = "Ohio","37" = "Oklahoma","38" = "Oregon",
+                    "39" = "Pennsylvania","40" = "Rhode Island","41" = "South Carolina",
+                    "42" = "South Dakota","43" = "Tennessee","44" = "Texas","45" = "Utah",
+                    "46" = "Vermont","47" = "Virginia","48" = "Washington","49" = "West Virginia",
+                    "50" = "Wisconsin","51" = "Wyoming")
+
+  DMV_county_labels <- c(
+    "21005"="Calvert County", "21009"="Charles County", "21011"="Frederick County",
+    "21016"="Montgomery County", "21017"="Prince Georges County",
+    "47021"="Arlington County", "47066"="Clarke County", "47087"="Fairfax County",
+    "47090"="Fauquier County", "47159"="Loudoun County", "47225"="Prince William County",
+    "47264"="Spotsylvania County", "47267"="Stafford County", "47279"="Warren County",
+    "47300"="Alexandria city", "47333"="Fairfax city", "47336"="Falls Church city",
+    "47342"="Fredericksburg city", "09001"="District of Columbia")
+
+  month_of_death_labels <- c("01"="January","02"="February","03"="March","04"="April",
+                             "05"="May","06"="June","07"="July","08"="August",
+                             "09"="September","10"="October","11"="November","12"="December")
+
+  age_10_yr_labels <- c("1"="Under 1 year","2"="1-4 years","3"="5-14 years","4"="15-24 years",
+                        "5"="25-34 years","6"="35-44 years","7"="45-54 years","8"="55-64 years",
+                        "9"="65-74 years","10"="75-84 years","11"="85 years and over","12"="Age not stated")
+
+  age_5_yr_labels <- c("1"="Under 1 month","2"="1 month - 11 months","3"="1 year","4"="2 years",
+                       "5"="3 years","6"="4 years","7"="5-9 years","8"="10-14 years",
+                       "9"="15-19 years","10"="20-24 years","11"="25-29 years","12"="30-34 years",
+                       "13"="35-39 years","14"="40-44 years","15"="45-49 years","16"="50-54 years",
+                       "17"="55-59 years","18"="60-64 years","19"="65-69 years","20"="70-74 years",
+                       "21"="75-79 years","22"="80-84 years","23"="85-89 years","24"="90-94 years",
+                       "25"="95-99 years","26"="100 years and over","27"="Age not stated")
+
+  age_infant_labels <- c("1"="Under 1 hour","2"="1-23 hours","3"="1 day","4"="2 days",
+                         "5"="3 days","6"="4 days","7"="5 days","8"="6 days",
+                         "9"="7-13 days","10"="14-20 days","11"="21-27 days","12"="1 month",
+                         "13"="2 months","14"="3 months","15"="4 months","16"="5 months",
+                         "17"="6 months","18"="7 months","19"="8 months","20"="9 months",
+                         "21"="10 months","22"="11 months","99"="Age not stated")
+
+  place_of_accident_labels <- c("0"="Causes other than E850-E929","1"="Home","2"="Farm",
+                                "3"="Mine and Quarry","4"="Industrial Place and Premises",
+                                "5"="Place of Recreation and Sport","6"="Street and Highway",
+                                "7"="Public Building","8"="Resident Institution",
+                                "9"="Other Specified Places","Blank"="Place Not Specified")
+
+  # Apply transformations and labeling
+  data <- data %>% mutate(
+    sex = factor(sex_labels[as.character(sex)]),
+    race_detailed = factor(race_detailed_labels[as.character(race_detailed)]),
+    race_white_non_white = factor(race_white_non_white_labels[as.character(race_white_non_white)]),
+    race_recode = factor(race_labels[as.character(race_recode)]),
+    autopsy_performed = factor(autopsy_labels[as.character(autopsy_performed)]),
+    resident_status = factor(resident_status_labels[as.character(resident_status)]),
+    metro_status = factor(metro_status_labels[as.character(metro_status)]),
+    state_residence = factor(state_labels[as.character(state_residence)]),
+    DMV_county_residence = factor(DMV_county_labels[as.character(county_residence)]),
+    state_occurence = factor(state_labels[as.character(state_occurence)]),
+    DMV_county_occurence = factor(DMV_county_labels[as.character(county_occurence)]),
+    month_of_death = factor(month_of_death_labels[as.character(month_of_death)]),
+    age_10_yr = factor(age_10_yr_labels[as.character(age_10_yr)]),
+    age_5_yr = factor(age_5_yr_labels[as.character(age_5_yr)]),
+    age_infant = factor(age_infant_labels[as.character(age_infant)]),
+    place_of_accident = factor(place_of_accident_labels[as.character(place_of_accident)]),
+    age = case_when(
+      age < 200 ~ age,
+      between(age, 200, 212) ~ round((age-200)/12,3),
+      between(age, 300, 304) ~ round((age-300)/52,4),
+      between(age, 400, 428) ~ round((age-400)/365,5),
+      between(age, 500, 523) ~ round((age-500)/8760,6),
+      between(age, 600, 659) ~ round((age-600)/525600,6),
+      TRUE ~ NA_real_)
+  )
+
+  return(mort1972)
+}
+View(mort1972)
+```
+
+```{r}
+mort1972_DMV <- mort1972 %>%
+  filter(state_residence == "9" | state_occurence == "9")
+View(mort1972_DMV)
+```
+
+```{r}
+mort1972_DC_only <- mort1972 %>%
+  filter(state_residence == 9 & state_occurence == 9)
+
+# Check results
+View(mort1972_DC_only)
+```
+
+```{r}
+colnames(mort1972_DC_only)
+```
+
+```{r}
+# Create new filtered dataset with selected columns only
+mort1972_DC_cause_race_sex <- mort1972_DC_only %>%
+  select(
+    data_year,
+    sex, 
+    race_detailed, 
+    race_white_non_white, 
+    race_recode,
+    underlying_cause_detailed,
+    underlying_cause_281,
+    underlying_cause_69,
+    underlying_infant_cause_65,
+    underlying_cause_34,
+    entity_code_1, entity_condition_code_1, entity_injury_flag_1,
+    entity_code_2, entity_condition_code_2, entity_injury_flag_2,
+    entity_code_3, entity_condition_code_3, entity_injury_flag_3,
+    entity_code_4, entity_condition_code_4, entity_injury_flag_4,
+    entity_code_5, entity_condition_code_5, entity_injury_flag_5,
+    entity_code_6, entity_condition_code_6, entity_injury_flag_6,
+    entity_code_7, entity_condition_code_7, entity_injury_flag_7,
+    entity_code_8, entity_condition_code_8, entity_injury_flag_8,
+    entity_code_9, entity_condition_code_9, entity_injury_flag_9,
+    entity_code_10, entity_condition_code_10, entity_injury_flag_10,
+    entity_code_11, entity_condition_code_11, entity_injury_flag_11,
+    entity_code_12, entity_condition_code_12, entity_injury_flag_12,
+    entity_code_13, entity_condition_code_13, entity_injury_flag_13,
+    entity_code_14, entity_condition_code_14, entity_injury_flag_14,
+    number_of_entity_codes,
+    number_of_record_codes,
+    record_condition_code_1, record_injury_flag_1,
+    record_condition_code_2, record_injury_flag_2,
+    record_condition_code_3, record_injury_flag_3,
+    record_condition_code_4, record_injury_flag_4,
+    record_condition_code_5, record_injury_flag_5,
+    record_condition_code_6, record_injury_flag_6,
+    record_condition_code_7, record_injury_flag_7,
+    record_condition_code_8, record_injury_flag_8,
+    record_condition_code_9, record_injury_flag_9,
+    record_condition_code_10, record_injury_flag_10,
+    record_condition_code_11, record_injury_flag_11,
+    record_condition_code_12, record_injury_flag_12,
+    record_condition_code_13, record_injury_flag_13,
+    record_condition_code_14, record_injury_flag_14
+  )
+
+# Inspect the results clearly
+View(mort1972_DC_cause_race_sex)
+
+```
+
+```{r}
+# Load the dataset
+DC_Compressed_Mortality_1968_1978 <- fread("/Users/yuanhaining/Desktop/DC_Compressed_Mortality_1968_1978.csv")
+DC_Compressed_Mortality_1968_1978
+```
+```{r}
+# View column names
+colnames(DC_Compressed_Mortality_1968_1978)
+```
+
+```{r}
+str(DC_Compressed_Mortality_1968_1978$Year)
+
+```
+
+```{r}
+# Filter and view only 1972 records
+DC_compressed_mortality_1972 <- DC_Compressed_Mortality_1968_1978[Year == 1972]
+
+# Double-check the result
+unique(DC_compressed_mortality_1972$Year)  # Should return just 1972
+
+# View the result
+View(DC_compressed_mortality_1972)
+
+```
+
+```{r}
+
+# 1. Filter for infant deaths (age_10_yr == 1 means "Under 1 year")
+infant_deaths_1972 <- mort1972_DC_only %>%
+  filter(age_10_yr == 1)
+
+# 2. Count the number of infant deaths in mort1972_DC_only
+your_count <- nrow(infant_deaths_1972)
+
+# 3. Assign the official public count from DC_Compressed_Mortality_1968_1978.csv
+public_count <- 330  # Based on uploaded CSV summary
+
+# 4. Calculate comparison metrics
+percent_match <- (your_count / public_count) * 100
+difference <- abs(your_count - public_count)
+
+# 5. Print results
+cat("👶 Number of Infant Deaths in mort1972_DC_only:", your_count, "\n")
+cat("📊 Number of Infant Deaths in Public Dataset (1972, DC):", public_count, "\n")
+cat("✅ Percentage Match:", round(percent_match, 2), "%\n")
+cat("❗ Difference in Count:", difference, "\n")
+
+# Optional: View filtered infant deaths data
+View(infant_deaths_1972)
+
+```
