@@ -1,0 +1,103 @@
+---
+title: "mort micro data merged"
+author: "Adeline Yuan"
+date: "2025-05-01"
+output: html_document
+---
+
+```{r}
+library(readr)
+library(dplyr)
+library(haven)
+library(data.table)
+library(DBI)
+library(duckdb)
+
+```
+
+
+
+```{r}
+folder_path <- "/Users/yuanhaining/Desktop/Mort micro1979-1989"
+files <- list.files(path = folder_path, pattern = "\\.csv$", full.names = TRUE)
+output_file <- file.path(folder_path, "merged_output.csv")
+
+if (file.exists(output_file)) file.remove(output_file)
+
+for (i in seq_along(files)) {
+  message("Reading and appending: ", files[i])
+  
+  dt <- tryCatch({
+    fread(files[i])
+  }, error = function(e) {
+    message("Error reading file: ", files[i])
+    return(NULL)
+  })
+  
+  if (!is.null(dt)) {
+    fwrite(dt, file = output_file, append = i > 1)
+  }
+}
+
+message("✅ All files processed and saved to: ", output_file)
+
+# 🔍 Preview: First few rows and structure of final merged CSV
+merged_preview <- fread(output_file, nrows = 10)
+print(head(merged_preview))
+str(merged_preview)
+
+
+```
+
+```{r}
+merged_preview
+```
+
+Another method: 
+```{r}
+# Step 4: Read each file one by one and append to merged output (low memory usage)
+for (i in seq_along(files)) {
+  message("Reading and appending: ", files[i])
+  
+  dt <- tryCatch({
+    fread(files[i])
+  }, error = function(e) {
+    message("❌ Error reading file: ", files[i])
+    return(NULL)
+  })
+  
+  if (!is.null(dt)) {
+    fwrite(dt, file = output_file, append = i > 1)
+  }
+}
+message("✅ All files merged successfully into: ", output_file)
+
+# Step 5: Read the merged dataset into R (if small enough to fit into memory)
+merged_data <- fread(output_file)
+
+# Step 6: View the entire dataset (opens spreadsheet viewer in RStudio)
+View(merged_data)  # This lets you scroll all rows and columns
+
+# Step 7: Optional - print summary info in console
+print(head(merged_data))        # First few rows
+str(merged_data, list.len=200)  # Show all columns (up to 200)
+colnames(merged_data)           # List of all column names
+nrow(merged_data)               # Total rows
+ncol(merged_data)               # Total columns
+
+```
+```{r}
+csv_path <- "/Users/yuanhaining/Desktop/Mort_micro1979-1989/merged_output1979-1989.csv"
+
+# Check existence
+if (!file.exists(csv_path)) stop("❌ File not found: ", csv_path)
+
+# Read only the first 100,000 rows to test
+dt_chunk <- fread(file = csv_path, nrows = 100000, fill = TRUE, showProgress = TRUE, verbose = TRUE)
+
+# Preview
+print(dim(dt_chunk))
+print(head(dt_chunk))
+
+
+```
