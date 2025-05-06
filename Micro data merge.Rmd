@@ -99,5 +99,42 @@ dt_chunk <- fread(file = csv_path, nrows = 100000, fill = TRUE, showProgress = T
 print(dim(dt_chunk))
 print(head(dt_chunk))
 
-
 ```
+```{r}
+# Step 2: Connect to DuckDB
+con <- dbConnect(duckdb::duckdb(), dbdir = "mortality.duckdb")
+
+# Step 3: Define CSV path
+csv_path <- "/Users/yuanhaining/Desktop/Mort_micro1979-1989/merged_output1979-1989.csv"
+
+# Step 4: Filter DC records where stateoc == '9'
+query <- paste0("
+  SELECT *
+  FROM read_csv('", csv_path, "',
+    header = TRUE,
+    delim = ',',
+    quote = '\"',
+    escape = '\"',
+    sample_size = -1,
+    all_varchar = TRUE,
+    strict_mode = FALSE,
+    ignore_errors = TRUE,
+    null_padding = TRUE
+  )
+  WHERE stateoc = '9'
+")
+
+# Step 5: Run the query and assign result to R
+dc_filtered <- dbGetQuery(con, query)
+
+# Step 6: Display and save
+print(dim(dc_filtered))
+print(head(dc_filtered, 10))
+
+write.csv(dc_filtered, "DC_filtered_1979_1989.csv", row.names = FALSE)
+message("✅ Filtered DC data saved to DC_filtered_1979_1989.csv")
+
+# Step 7: Disconnect
+dbDisconnect(con, shutdown = TRUE)
+```
+

@@ -1,0 +1,241 @@
+---
+title: "Recode DC micro mort data1979-1989"
+author: "Adeline Yuan"
+date: "2025-05-06"
+output: html_document
+---
+
+```{r}
+library(readr)
+library(dplyr)
+library(haven)
+library(data.table)
+```
+
+```{r}
+# Step 2: Define the exact file path
+dc_mort_1979_1989 <- "/Users/yuanhaining/Desktop/Mort_micro1979-1989/DC_filtered_1979_1989.csv"
+
+# Step 4: Read the CSV into R
+DC_filtered_1979_1989 <- fread(dc_mort_1979_1989, showProgress = TRUE)
+DC_filtered_1979_1989
+```
+```{r}
+# Step 2: Rename relevant columns
+Recode_DC_filtered_1979_1989 <- DC_filtered_1979_1989 |>
+  rename(
+    year = datayear,
+    reporting_area = reparea,
+    shipment_number = shipno,
+    record_type = rectype,
+    resident_status = restatus,
+    county_occurrence = countyoc,
+    state_occurrence = stateoc,
+    county_residence = countyrs,
+    state_residence = staters,
+    metro_status = metro,
+    sex = sex,
+    race_detailed = race,
+    race_r3 = racer3,
+    race_white_nonwhite = racer2,
+    age_raw = age,
+    age_10yr = ager12,
+    age_5yr = ager27,
+    age_infant = ager22,
+    autopsy_performed = autopsy,
+    place_of_accident = accident,
+
+    # Entity-related renaming
+    entity_6 = entity6,
+    entity_line_6 = econdp_6,
+    entity_seq_6 = econds_6,
+    entity_code_6 = enicon_6,
+    entity_injury_flag_6 = eniflag6,
+    entity_7 = entity7,
+    entity_line_7 = econdp_7,
+    entity_seq_7 = econds_7,
+    entity_code_7 = enicon_7,
+    entity_injury_flag_7 = eniflag7,
+    entity_8 = entity8,
+    entity_line_8 = econdp_8,
+    entity_seq_8 = econds_8,
+    entity_code_8 = enicon_8,
+    entity_injury_flag_8 = eniflag8,
+    entity_9 = entity9,
+    entity_line_9 = econdp_9,
+    entity_seq_9 = econds_9,
+    entity_code_9 = enicon_9,
+    entity_injury_flag_9 = eniflag9,
+    entity_10 = entity10,
+    entity_line_10 = econdp_10,
+    entity_seq_10 = econds_10,
+    entity_code_10 = enicon_10,
+    entity_injury_flag_10 = eniflag10,
+    entity_11 = entity11,
+    entity_line_11 = econdp_11,
+    entity_seq_11 = econds_11,
+    entity_code_11 = enicon_11,
+    entity_injury_flag_11 = eniflag11,
+    entity_12 = entity12,
+    entity_line_12 = econdp_12,
+    entity_seq_12 = econds_12,
+    entity_code_12 = enicon_12,
+    entity_injury_flag_12 = eniflag12,
+    entity_13 = entity13,
+    entity_line_13 = econdp_13,
+    entity_seq_13 = econds_13,
+    entity_code_13 = enicon_13,
+    entity_injury_flag_13 = eniflag13,
+    entity_14 = entity14,
+    entity_line_14 = econdp_14,
+    entity_seq_14 = econds_14,
+    entity_code_14 = enicon_14,
+    entity_injury_flag_14 = eniflag14,
+    entity_15 = entity15,
+    entity_line_15 = econdp_15,
+    entity_seq_15 = econds_15,
+    entity_code_15 = enicon_15,
+    entity_injury_flag_15 = eniflag15,
+    entity_16 = entity16,
+    entity_line_16 = econdp_16,
+    entity_seq_16 = econds_16,
+    entity_code_16 = enicon_16,
+    entity_injury_flag_16 = eniflag16,
+    entity_17 = entity17,
+    entity_line_17 = econdp_17,
+    entity_seq_17 = econds_17,
+    entity_code_17 = enicon_17,
+    entity_injury_flag_17 = eniflag17,
+    entity_18 = entity18,
+    entity_line_18 = econdp_18,
+    entity_seq_18 = econds_18,
+    entity_code_18 = enicon_18,
+    entity_injury_flag_18 = eniflag18,
+    entity_19 = entity19,
+    entity_line_19 = econdp_19,
+    entity_seq_19 = econds_19,
+    entity_code_19 = enicon_19,
+    entity_injury_flag_19 = eniflag19,
+    entity_20 = entity20,
+    entity_line_20 = econdp_20,
+    entity_seq_20 = econds_20,
+    entity_code_20 = enicon_20,
+    entity_injury_flag_20 = eniflag20,
+
+    # Record code fields
+    record_code_6 = record_6,
+    record_injury_flag_6 = rnifla_6,
+    record_code_7 = record_7,
+    record_injury_flag_7 = rnifla_7,
+    record_code_8 = record_8,
+    record_injury_flag_8 = rnifla_8,
+    record_code_9 = record_9,
+    record_injury_flag_9 = rnifla_9,
+    record_code_10 = record_10,
+    record_injury_flag_10 = rnifla_10,
+    record_code_11 = record_11,
+    record_injury_flag_11 = rnifla_11,
+    record_code_12 = record_12,
+    record_injury_flag_12 = rnifla_12,
+    record_code_13 = record_13,
+    record_injury_flag_13 = rnifla_13,
+    record_code_14 = record_14,
+    record_injury_flag_14 = rnifla_14,
+    record_code_15 = record_15,
+    record_injury_flag_15 = rnifla_15,
+    record_code_16 = record_16,
+    record_injury_flag_16 = rnifla_16,
+    record_code_17 = record_17,
+    record_injury_flag_17 = rnifla_17,
+    record_code_18 = record_18,
+    record_injury_flag_18 = rnifla_18,
+    record_code_19 = record_19,
+    record_injury_flag_19 = rnifla_19,
+    record_code_20 = record_20,
+    record_injury_flag_20 = rnifla_20
+  )
+
+
+# Step 3: Recode factor variables
+
+# 3a. Sex
+DC_filtered_1979_1989$sex <- factor(
+  DC_filtered_1979_1989$sex,
+  levels = c("1", "2"),
+  labels = c("Male", "Female")
+)
+
+# 3b. Race (detailed)
+DC_filtered_1979_1989$race_detailed <- factor(
+  DC_filtered_1979_1989$race_detailed,
+  levels = c("0", "1", "2", "3", "4", "5", "6", "7", "8"),
+  labels = c("Guamian", "White", "Black", "American Indian", 
+             "Chinese", "Japanese", "Hawaiian", "Other", "Filipino")
+)
+
+# 3c. Race R3 (collapsed)
+DC_filtered_1979_1989$race_r3 <- factor(
+  DC_filtered_1979_1989$race_r3,
+  levels = c("1", "2", "3"),
+  labels = c("White", "Black", "Other")
+)
+
+# 3d. Race White/Non-white
+DC_filtered_1979_1989$race_white_nonwhite <- factor(
+  DC_filtered_1979_1989$race_white_nonwhite,
+  levels = c("1", "2"),
+  labels = c("White", "Non-white")
+)
+
+# 3e. Resident Status
+DC_filtered_1979_1989$resident_status <- factor(
+  DC_filtered_1979_1989$resident_status,
+  levels = c("1", "2", "3", "4"),
+  labels = c("Resident", "Intrastate Nonresident", 
+             "Interstate Nonresident", "Foreign Resident")
+)
+
+# 3f. Metro Status
+DC_filtered_1979_1989$metro_status <- factor(
+  DC_filtered_1979_1989$metro_status,
+  levels = c("1", "2", "Z"),
+  labels = c("Metropolitan", "Nonmetropolitan", "Foreign")
+)
+
+# 3g. County (fixed for DC only)
+DC_filtered_1979_1989$county_occurrence <- factor(
+  DC_filtered_1979_1989$county_occurrence,
+  levels = c("1"),
+  labels = c("District of Columbia")
+)
+DC_filtered_1979_1989$county_residence <- factor(
+  DC_filtered_1979_1989$county_residence,
+  levels = c("1"),
+  labels = c("District of Columbia")
+)
+
+# 3h. Autopsy
+DC_filtered_1979_1989$autopsy_performed <- factor(
+  DC_filtered_1979_1989$autopsy_performed,
+  levels = c("0", "1", "8", "9"),
+  labels = c("No", "Yes", "Item not on certificate", "Not stated")
+)
+
+# 3i. Place of Accident
+DC_filtered_1979_1989$place_of_accident <- factor(
+  DC_filtered_1979_1989$place_of_accident,
+  levels = c("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ""),
+  labels = c(
+    "Not an accident", "Home", "Farm", "Mine and Quarry",
+    "Industrial Premises", "Recreational Place", "Street and Highway",
+    "Public Building", "Residential Institution", "Other Specified Places",
+    "Place Not Specified"
+  )
+)
+
+# Step 4: Preview updated dataset
+View(Recode_DC_filtered_1979_1989)
+
+```
+
+
